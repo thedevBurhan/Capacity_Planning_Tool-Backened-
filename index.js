@@ -6,6 +6,8 @@ import cors from "cors";
 import { usersRouter } from "./Routers/Routers-User.js";
 import {ToDoListdataRouter} from "./Routers/Routers-To-Do-list.js";
 import {TimeSheetdataRouter} from "./Routers/Routers-Time-Sheet.js";
+import request from "request";
+import bodyParser from "body-parser";
 //configure thhe environment
 dotenv.config();
 const PORT = process.env.PORT;
@@ -26,13 +28,11 @@ app.use("/toDoListdata",isAuthenticated,ToDoListdataRouter)
 app.use("/timeSheet",isAuthenticated,TimeSheetdataRouter)
  
 //zoom
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.get('/', (req, res) => {
-
-    // Step 1: 
-    // Check if the code parameter is in the url 
-    // if an authorization code is available, the user has most likely been redirected from Zoom OAuth
-    // if not, the user needs to be redirected to Zoom OAuth to authorize
-
+    // Step 1: Check if the code parameter is in the URL
     if (req.query.code) {
 
         // Step 3: 
@@ -104,8 +104,37 @@ app.get('/', (req, res) => {
 
     // Step 2: 
     // If no authorization code is available, redirect to Zoom OAuth to authorize
-    res.redirect('https://zoom.us/oauth/authorize?response_type=code&client_id=' + clientID  + '&redirect_uri=' + redirectURL);
-
+    res.redirect('https://zoom.us/oauth/authorize?response_type=code&client_id=' + clientID + '&redirect_uri=' + redirectURL)
 })
+app.post('/zoom/callback', (req, res) => {
+    const { code } = req.body;
+    const url = `https://zoom.us/oauth/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirectURL}`;
+
+    // Perform the POST request to exchange authorization code for an access token
+    request.post(url, (error, response, body) => {
+        if (!error && response.statusCode == 200) {
+            const tokenResponse = JSON.parse(body);
+            const accessToken = tokenResponse.access_token;
+            // You can use the accessToken to make API calls on behalf of the user
+
+            // Example: Get user information using the obtained access token
+            request.get('https://api.zoom.us/v2/users/me', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            }, (error, response, body) => {
+                if (!error && response.statusCode == 200) {
+                    const user = JSON.parse(body);
+                    // Handle the user data here
+                    res.json(user);
+                } else {
+                    res.status(500).json({ error: "Failed to fetch user information from Zoom API" });
+                }
+            });
+        } else {
+            res.status(500).json({ error: "Failed to exchange authorization code for access token with Zoom" });
+        }
+    });
+});
 // listen to a server
 app.listen(PORT, () => console.log(`Server Running in localhost:${PORT}`));
