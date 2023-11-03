@@ -106,7 +106,7 @@ app.get('/', (req, res) => {
     // If no authorization code is available, redirect to Zoom OAuth to authorize
     res.redirect('https://zoom.us/oauth/authorize?response_type=code&client_id=' + clientID + '&redirect_uri=' + redirectURL)
 })
-app.post('/zoom/callback', (req, res) => {
+app.post('/zoom/', (req, res) => {
     const { code } = req.body;
     const url = `https://zoom.us/oauth/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirectURL}`;
 
