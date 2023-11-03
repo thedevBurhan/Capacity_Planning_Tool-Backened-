@@ -107,7 +107,9 @@ app.get('/', (req, res) => {
     res.redirect('https://zoom.us/oauth/authorize?response_type=code&client_id=' + clientID + '&redirect_uri=' + redirectURL)
 })
 app.post('/zoom/', (req, res) => {
-    const { code } = req.body;
+    const { code } = req.query;
+    console.log(code);
+
     const url = `https://zoom.us/oauth/token?grant_type=authorization_code&code=${code}&redirect_uri=${redirectURL}`;
 
     // Perform the POST request to exchange authorization code for an access token
@@ -115,7 +117,6 @@ app.post('/zoom/', (req, res) => {
         if (!error && response.statusCode == 200) {
             const tokenResponse = JSON.parse(body);
             const accessToken = tokenResponse.access_token;
-            // You can use the accessToken to make API calls on behalf of the user
 
             // Example: Get user information using the obtained access token
             request.get('https://api.zoom.us/v2/users/me', {
@@ -136,5 +137,6 @@ app.post('/zoom/', (req, res) => {
         }
     });
 });
+
 // listen to a server
 app.listen(PORT, () => console.log(`Server Running in localhost:${PORT}`));
