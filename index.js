@@ -26,7 +26,7 @@ app.use("/toDoListdata",isAuthenticated,ToDoListdataRouter)
 app.use("/timeSheet",isAuthenticated,TimeSheetdataRouter)
  
 //zoom
-app.get('/zoom', (req, res) => {
+app.get('/', (req, res) => {
 
     // Step 1: 
     // Check if the code parameter is in the url 
