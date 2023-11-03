@@ -6,7 +6,6 @@ import cors from "cors";
 import { usersRouter } from "./Routers/Routers-User.js";
 import {ToDoListdataRouter} from "./Routers/Routers-To-Do-list.js";
 import {TimeSheetdataRouter} from "./Routers/Routers-Time-Sheet.js";
-import {ZoomMeetingRouter} from "./Routers/Routers-Meeting.js";
 //configure thhe environment
 dotenv.config();
 const PORT = process.env.PORT;
@@ -31,8 +30,6 @@ app.use("/toDoListdata",isAuthenticated,ToDoListdataRouter)
 // Time Sheet 
 app.use("/timeSheet",isAuthenticated,TimeSheetdataRouter)
  
-// Meeting
-app.use("/meet",isAuthenticated,ZoomMeetingRouter)
 //zoom
 app.get('/zoom', (req, res) => {
 
