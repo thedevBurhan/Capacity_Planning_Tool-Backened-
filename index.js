@@ -16,13 +16,8 @@ const  clientID=process.env.clientID;
 const app = express();
 // MiddleWare
 app.use(express.json());
-const corsConfig = {
-    origin: '',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
-}
-app.use(cors(corsConfig))
-app.options("", cors(corsConfig))
+app.use(cors());
+
 //UserssRouter
 app.use("/users", usersRouter);
 // To_Do_List
