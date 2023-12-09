@@ -103,12 +103,7 @@ app.post("/zoom", (req, res) => {
   }
 
   // If no authorization code is available, redirect to Zoom OAuth to authorize
-  res.redirect(
-    "https://zoom.us/oauth/authorize?response_type=code&client_id=" +
-      clientID +
-      "&redirect_uri=" +
-      redirectURL
-  );
+  res.redirect(`https://capacity-planning-tool-backend.vercel.app/zoom/authorize`);
 });
 
 
