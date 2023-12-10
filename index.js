@@ -25,7 +25,7 @@ app.use("/users", usersRouter);
 app.use("/toDoListdata", isAuthenticated, ToDoListdataRouter);
 app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
 
-app.get("/Meeting/zoom/", async (req, res) => {
+app.post("/zoom/", async (req, res) => {
   try {
     if (!req.query.code) {
       return res.status(400).send("Code parameter missing");
