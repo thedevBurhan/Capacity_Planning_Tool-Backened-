@@ -33,7 +33,7 @@ app.get("/Meeting/zoom/", async (req, res) => {
       console.error("Code parameter missing");
       return res.status(400).send("Code parameter missing");
     }
-
+    console.log("code",code);
     const url =
       "https://zoom.us/oauth/token?grant_type=authorization_code&code=" +
       code +
@@ -55,7 +55,7 @@ app.get("/Meeting/zoom/", async (req, res) => {
           Authorization: `Bearer ${tokenResponse.data.access_token}`,
         },
       });
-
+  console.log("tokenResponse",tokenResponse)
       try {
         const zoomUserData = zoomUser.data;
         console.log("API call ", zoomUserData);
