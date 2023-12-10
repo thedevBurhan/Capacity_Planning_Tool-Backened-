@@ -47,7 +47,7 @@ app.get("/Meeting/zoom/", async (req, res) => {
       },
     });
 
-    if (tokenResponse.data.access_token) {
+    if (tokenResponse.data && tokenResponse.data.access_token) {
       const apiUrl = "https://api.zoom.us/v2/users/me";
 
       const zoomUser = await axios.get(apiUrl, {
@@ -89,6 +89,7 @@ app.get("/Meeting/zoom/", async (req, res) => {
         res.status(500).send("Internal Server Error");
       }
     } else {
+      console.error("Invalid token response:", tokenResponse.data);
       res.status(500).send("Internal Server Error");
     }
   } catch (error) {
@@ -96,4 +97,5 @@ app.get("/Meeting/zoom/", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 app.listen(PORT, () => console.log(`Server Running on port ${PORT}`));
