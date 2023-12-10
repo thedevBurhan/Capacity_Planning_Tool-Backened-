@@ -1,12 +1,8 @@
 import express from "express";
-import request from "request";
+import axios from "axios";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-import { isAuthenticated } from "./Authentication/Auth.js";
-import { usersRouter } from "./Routers/Routers-User.js";
-import { ToDoListdataRouter } from "./Routers/Routers-To-Do-list.js";
-import { TimeSheetdataRouter } from "./Routers/Routers-Time-Sheet.js";
 
 dotenv.config();
 
@@ -21,37 +17,38 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/users", usersRouter);
-app.use("/toDoListdata", isAuthenticated, ToDoListdataRouter);
-app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
-
 app.post("/zoom/", async (req, res) => {
   try {
-    if (!req.query.code) {
+    const code = req.body.code;
+
+    if (!code) {
       return res.status(400).send("Code parameter missing");
     }
 
     const url =
       "https://zoom.us/oauth/token?grant_type=authorization_code&code=" +
-      req.query.code +
+      code +
       "&redirect_uri=" +
       redirectURL;
 
-    const tokenResponse = await request.post({
-      url,
-      auth: { user: clientID, pass: clientSecret },
+    const tokenResponse = await axios.post(url, null, {
+      auth: {
+        username: clientID,
+        password: clientSecret,
+      },
     });
 
-    if (tokenResponse.access_token) {
+    if (tokenResponse.data.access_token) {
       const apiUrl = "https://api.zoom.us/v2/users/me";
 
-      const zoomUser = await request.get({
-        url: apiUrl,
-        auth: { bearer: tokenResponse.access_token },
+      const zoomUser = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${tokenResponse.data.access_token}`,
+        },
       });
 
       try {
-        const zoomUserData = JSON.parse(zoomUser);
+        const zoomUserData = zoomUser.data;
         console.log("API call ", zoomUserData);
 
         const JSONResponse = `<pre><code>${JSON.stringify(zoomUserData, null, 2)}</code></pre>`;
