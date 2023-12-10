@@ -24,80 +24,70 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/users", usersRouter);
 app.use("/toDoListdata", isAuthenticated, ToDoListdataRouter);
 app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
-// app.get("/Meeting/zoom/", (req, res) => {
-//   res.send("Hello from /Meeting/zoom/");
-// });
-app.get("/Meeting/zoom/", (req, res) => {
-  if (req.query.code) {
+
+app.get("/Meeting/zoom/", async (req, res) => {
+  try {
+    if (!req.query.code) {
+      return res.status(400).send("Code parameter missing");
+    }
+
     const url =
       "https://zoom.us/oauth/token?grant_type=authorization_code&code=" +
       req.query.code +
       "&redirect_uri=" +
       redirectURL;
 
-    request.post(url, (error, response, body) => {
-      if (error) {
-        console.error("Error exchanging code for access token:", error);
-        return res.status(500).send("Internal Server Error");
-      }
+    const tokenResponse = await request.post({
+      url,
+      auth: { user: clientID, pass: clientSecret },
+    });
+
+    if (tokenResponse.access_token) {
+      const apiUrl = "https://api.zoom.us/v2/users/me";
+
+      const zoomUser = await request.get({
+        url: apiUrl,
+        auth: { bearer: tokenResponse.access_token },
+      });
 
       try {
-        const tokenResponse = JSON.parse(body);
-        console.log(`access_token: ${tokenResponse.access_token}`);
-        console.log(`refresh_token: ${tokenResponse.refresh_token}`);
+        const zoomUserData = JSON.parse(zoomUser);
+        console.log("API call ", zoomUserData);
 
-        if (tokenResponse.access_token) {
-          const apiUrl = "https://api.zoom.us/v2/users/me";
+        const JSONResponse = `<pre><code>${JSON.stringify(zoomUserData, null, 2)}</code></pre>`;
 
-          request.get(apiUrl, (error, response, body) => {
-            if (error) {
-              console.error("API Response Error:", error);
-              return res.status(500).send("Internal Server Error");
-            }
-
-            try {
-              const zoomUser = JSON.parse(body);
-              console.log("API call ", zoomUser);
-
-              const JSONResponse = `<pre><code>${JSON.stringify(zoomUser, null, 2)}</code></pre>`;
-
-              res.send(`
-                <style>
-                  /* Your styles here */
-                </style>
-                <div class="container">
-                  <div class="info">
-                    <img src="${zoomUser.pic_url}" alt="User photo" />
-                    <div>
-                      <span>Hello World!</span>
-                      <h2>${zoomUser.first_name} ${zoomUser.last_name}</h2>
-                      <p>${zoomUser.role_name}, ${zoomUser.company}</p>
-                    </div>
-                  </div>
-                  <div class="response">
-                    <h4>JSON Response:</h4>
-                    <a href="https://marketplace.zoom.us/docs/api-reference/zoom-api/users/user" target="_blank">
-                      API Reference
-                    </a>
-                    ${JSONResponse}
-                  </div>
-                </div>
-              `);
-            } catch (parseError) {
-              console.error("Error parsing Zoom API response:", parseError);
-              res.status(500).send("Internal Server Error");
-            }
-          }).auth(null, null, true, tokenResponse.access_token);
-        } else {
-          res.status(500).send("Internal Server Error");
-        }
+        res.send(`
+          <style>
+            /* Your styles here */
+          </style>
+          <div class="container">
+            <div class="info">
+              <img src="${zoomUserData.pic_url}" alt="User photo" />
+              <div>
+                <span>Hello World!</span>
+                <h2>${zoomUserData.first_name} ${zoomUserData.last_name}</h2>
+                <p>${zoomUserData.role_name}, ${zoomUserData.company}</p>
+              </div>
+            </div>
+            <div class="response">
+              <h4>JSON Response:</h4>
+              <a href="https://marketplace.zoom.us/docs/api-reference/zoom-api/users/user" target="_blank">
+                API Reference
+              </a>
+              ${JSONResponse}
+            </div>
+          </div>
+        `);
       } catch (parseError) {
-        console.error("Error parsing Zoom token response:", parseError);
+        console.error("Error parsing Zoom API response:", parseError);
         res.status(500).send("Internal Server Error");
       }
-    }).auth(clientID, clientSecret);
-  } else {
-    res.redirect(`https://capacity-planning-tool-backend.vercel.app/zoom/authorize`);
+    } else {
+      res.status(500).send("Internal Server Error");
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
