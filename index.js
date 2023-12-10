@@ -24,7 +24,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/users", usersRouter);
 app.use("/toDoListdata", isAuthenticated, ToDoListdataRouter);
 app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
-
+app.get("/Meeting/zoom/", (req, res) => {
+  res.send("Hello from /Meeting/zoom/");
+});
 app.post("/zoom", (req, res) => {
   if (req.query.code) {
     const url =
