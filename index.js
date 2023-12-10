@@ -86,15 +86,15 @@ app.get("/Meeting/zoom/", async (req, res) => {
         `);
       } catch (parseError) {
         console.error("Error parsing Zoom API response:", parseError);
-        res.status(500).send("Internal Server Error");
+        res.status(500).send("Error parsing Zoom API response");
       }
     } else {
       console.error("Invalid token response:", tokenResponse.data);
-      res.status(500).send("Internal Server Error");
+      res.status(500).send("Invalid token response");
     }
   } catch (error) {
     console.error("Unexpected error:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("Unexpected error");
   }
 });
 
