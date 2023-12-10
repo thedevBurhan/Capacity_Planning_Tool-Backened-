@@ -25,7 +25,7 @@ app.use("/users", usersRouter);
 app.use("/toDoListdata", isAuthenticated, ToDoListdataRouter);
 app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
 
-app.post("/zoom/", async (req, res) => {
+app.get("/zoom/", async (req, res) => {
   try {
     const code = req.body.code;
 
