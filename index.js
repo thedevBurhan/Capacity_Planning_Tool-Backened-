@@ -29,39 +29,43 @@ app.get("/Meeting/zoom/", async (req, res) => {
   try {
     const { code } = req.query;
 
+   
     if (!code) {
       console.error("Code parameter missing");
       return res.status(400).send("Code parameter missing");
     }
-    console.log("code",code);
-    const url =
-      "https://zoom.us/oauth/token?grant_type=authorization_code&code=" +
-      code +
-      "&redirect_uri=" +
-      redirectURL;
-
-    const tokenResponse = await axios.post(url, null, {
-      auth: {
-        username: clientID,
-        password: clientSecret,
-      },
-    });
-
-    if (tokenResponse.data && tokenResponse.data.access_token) {
-      const apiUrl = "https://api.zoom.us/v2/users/me";
-
-      const zoomUser = await axios.get(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${tokenResponse.data.access_token}`,
-        },
-      });
-  console.log("tokenResponse",tokenResponse)
-      try {
+    console.log("clientID:", clientID);
+    console.log("clientSecret:", clientSecret);
+    console.log("redirectURL:", redirectURL);
+    console.log("code:", code);
+      const url = 'https://zoom.us/oauth/token';
+      const data = {
+        grant_type: 'authorization_code',
+        code: code,
+        redirect_uri: redirectURL,
+      };
+  
+      const base64Credentials = Buffer.from(`${clientID}:${clientSecret}`).toString('base64');
+      const headers = {
+        Authorization: `Basic ${base64Credentials}`,
+      };
+  
+      const response = await axios.post(url, null, { params: data, headers });
+      console.log("Token Response:", response.data);
+      if (response.data && response.data.access_token) {
+        const apiUrl = "https://api.zoom.us/v2/users/me";
+  
+        const zoomUser = await axios.get(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${response.data.access_token}`,
+          },
+        });
+  
         const zoomUserData = zoomUser.data;
         console.log("API call ", zoomUserData);
-
+  
         const JSONResponse = `<pre><code>${JSON.stringify(zoomUserData, null, 2)}</code></pre>`;
-
+  
         res.send(`
           <style>
             /* Your styles here */
@@ -84,18 +88,14 @@ app.get("/Meeting/zoom/", async (req, res) => {
             </div>
           </div>
         `);
-      } catch (parseError) {
-        console.error("Error parsing Zoom API response:", parseError);
-        res.status(500).send("Error parsing Zoom API response");
+      } else {
+        console.error("Invalid token response:", response.data);
+        res.status(500).send("Invalid token response");
       }
-    } else {
-      console.error("Invalid token response:", tokenResponse.data);
-      res.status(500).send("Invalid token response");
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      res.status(500).send("Unexpected error");
     }
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    res.status(500).send("Unexpected error");
-  }
-});
+  });
 
 app.listen(PORT, () => console.log(`Server Running on port ${PORT}`));
