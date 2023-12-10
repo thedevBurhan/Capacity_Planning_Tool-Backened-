@@ -27,9 +27,10 @@ app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
 
 app.get("/Meeting/zoom/", async (req, res) => {
   try {
-    const code = req.body.code;
+    const { code } = req.query;
 
     if (!code) {
+      console.error("Code parameter missing");
       return res.status(400).send("Code parameter missing");
     }
 
