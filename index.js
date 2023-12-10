@@ -1,9 +1,13 @@
 import express from "express";
-import axios from "axios";
+import request from "request";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import { isAuthenticated } from "./Authentication/Auth.js";
+import { usersRouter } from "./Routers/Routers-User.js";
+import { ToDoListdataRouter } from "./Routers/Routers-To-Do-list.js";
+import { TimeSheetdataRouter } from "./Routers/Routers-Time-Sheet.js";
+import axios from "axios";
 dotenv.config();
 
 const app = express();
@@ -16,6 +20,10 @@ app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/users", usersRouter);
+app.use("/toDoListdata", isAuthenticated, ToDoListdataRouter);
+app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
 
 app.post("/zoom/", async (req, res) => {
   try {
@@ -87,5 +95,4 @@ app.post("/zoom/", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 app.listen(PORT, () => console.log(`Server Running on port ${PORT}`));
