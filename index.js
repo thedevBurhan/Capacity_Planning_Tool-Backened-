@@ -64,30 +64,7 @@ app.get("/Meeting/zoom/", async (req, res) => {
         const zoomUserData = zoomUser.data;
         console.log("API call ", zoomUserData);
   
-        const JSONResponse = `<pre><code>${JSON.stringify(zoomUserData, null, 2)}</code></pre>`;
-  
-        res.send(`
-          <style>
-            /* Your styles here */
-          </style>
-          <div class="container">
-            <div class="info">
-              <img src="${zoomUserData.pic_url}" alt="User photo" />
-              <div>
-                <span>Hello World!</span>
-                <h2>${zoomUserData.first_name} ${zoomUserData.last_name}</h2>
-                <p>${zoomUserData.role_name}, ${zoomUserData.company}</p>
-              </div>
-            </div>
-            <div class="response">
-              <h4>JSON Response:</h4>
-              <a href="https://marketplace.zoom.us/docs/api-reference/zoom-api/users/user" target="_blank">
-                API Reference
-              </a>
-              ${JSONResponse}
-            </div>
-          </div>
-        `);
+        res.json(zoomUserData);
       } else {
         console.error("Invalid token response:", response.data);
         res.status(500).send("Invalid token response");
@@ -97,5 +74,27 @@ app.get("/Meeting/zoom/", async (req, res) => {
       res.status(500).send("Unexpected error");
     }
   });
+//      if (response.data && response.data.access_token) {
+//       const apiUrl = "https://api.zoom.us/v2/users/me";
+
+//       const zoomUser = await axios.get(apiUrl, {
+//         headers: {
+//           Authorization: `Bearer ${response.data.access_token}`,
+//         },
+//       });
+
+//       const zoomUserData = zoomUser.data;
+//       console.log("API call ", zoomUserData);
+
+//       res.json(zoomUserData);
+//     } else {
+//       console.error("Invalid token response:", response.data);
+//       res.status(500).send("Invalid token response");
+//     }
+//   } catch (error) {
+//     console.error("Unexpected error:", error);
+//     res.status(500).send("Unexpected error");
+//   }
+// });
 
 app.listen(PORT, () => console.log(`Server Running on port ${PORT}`));
