@@ -24,56 +24,111 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/users", usersRouter);
 app.use("/toDoListdata", isAuthenticated, ToDoListdataRouter);
 app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
-
-app.get("/Meeting/zoom/", async (req, res) => {
+app.all("/Meeting/zoom/", async (req, res) => {
   try {
-    const { code } = req.query;
+    if (req.method === "GET" || req.method === "POST") {
+      const { code } = req.query;
 
-   
-    if (!code) {
-      console.error("Code parameter missing");
-      return res.status(400).send("Code parameter missing");
-    }
-    console.log("clientID:", clientID);
-    console.log("clientSecret:", clientSecret);
-    console.log("redirectURL:", redirectURL);
-    console.log("code:", code);
+      if (!code) {
+        console.error("Code parameter missing");
+        return res.status(400).send("Code parameter missing");
+      }
+
+      console.log("clientID:", clientID);
+      console.log("clientSecret:", clientSecret);
+      console.log("redirectURL:", redirectURL);
+      console.log("code:", code);
+
       const url = 'https://zoom.us/oauth/token';
       const data = {
         grant_type: 'authorization_code',
         code: code,
         redirect_uri: redirectURL,
       };
-  
+
       const base64Credentials = Buffer.from(`${clientID}:${clientSecret}`).toString('base64');
       const headers = {
         Authorization: `Basic ${base64Credentials}`,
       };
-  
+
       const response = await axios.post(url, null, { params: data, headers });
       console.log("Token Response:", response.data);
+
       if (response.data && response.data.access_token) {
         const apiUrl = "https://api.zoom.us/v2/users/me";
-  
+
         const zoomUser = await axios.get(apiUrl, {
           headers: {
             Authorization: `Bearer ${response.data.access_token}`,
           },
         });
-  
+
         const zoomUserData = zoomUser.data;
         console.log("API call ", zoomUserData);
-  
+
         res.json(zoomUserData);
       } else {
         console.error("Invalid token response:", response.data);
         res.status(500).send("Invalid token response");
       }
-    } catch (error) {
-      console.error("Unexpected error:", error);
-      res.status(500).send("Unexpected error");
+    } else {
+      res.status(405).send("Method Not Allowed");
     }
-  });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    res.status(500).send("Unexpected error");
+  }
+});
+
+// app.get("/Meeting/zoom/", async (req, res) => {
+//   try {
+//     const { code } = req.query;
+
+   
+//     if (!code) {
+//       console.error("Code parameter missing");
+//       return res.status(400).send("Code parameter missing");
+//     }
+//     console.log("clientID:", clientID);
+//     console.log("clientSecret:", clientSecret);
+//     console.log("redirectURL:", redirectURL);
+//     console.log("code:", code);
+//       const url = 'https://zoom.us/oauth/token';
+//       const data = {
+//         grant_type: 'authorization_code',
+//         code: code,
+//         redirect_uri: redirectURL,
+//       };
+  
+//       const base64Credentials = Buffer.from(`${clientID}:${clientSecret}`).toString('base64');
+//       const headers = {
+//         Authorization: `Basic ${base64Credentials}`,
+//       };
+  
+//       const response = await axios.post(url, null, { params: data, headers });
+//       console.log("Token Response:", response.data);
+//       if (response.data && response.data.access_token) {
+//         const apiUrl = "https://api.zoom.us/v2/users/me";
+  
+//         const zoomUser = await axios.get(apiUrl, {
+//           headers: {
+//             Authorization: `Bearer ${response.data.access_token}`,
+//           },
+//         });
+  
+//         const zoomUserData = zoomUser.data;
+//         console.log("API call ", zoomUserData);
+  
+//         res.json(zoomUserData);
+//       } else {
+//         console.error("Invalid token response:", response.data);
+//         res.status(500).send("Invalid token response");
+//       }
+//     } catch (error) {
+//       console.error("Unexpected error:", error);
+//       res.status(500).send("Unexpected error");
+//     }
+//   });
 //      if (response.data && response.data.access_token) {
 //       const apiUrl = "https://api.zoom.us/v2/users/me";
 
