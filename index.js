@@ -33,7 +33,7 @@ const ZOOM_AUTH='https://zoom.us/oauth/authorize?response_type=code&client_id='
 app.get('/', (req, res) => {
   /*
       If the code (auth code) property exists in req.query object,
-      user is redirected from Zoom OAuth. If not, then redirect to Zoom for OAuth
+      the user is redirected from Zoom OAuth. If not, then redirect to Zoom for OAuth
   */
   const authCode = req.query.code;
   if (authCode) {
@@ -46,14 +46,40 @@ app.get('/', (req, res) => {
       const refreshToken = body.refresh_token;
       // Obtained access and refresh tokens
       console.log(`Zoom OAuth Access Token: ${accessToken}`);
-      console.log(`Zoom OAuth Refresh Token: ${refreshToken}`);
-    })
-    .auth(process.env.clientID, process.env.clientSecret);
+      
+      // Use the obtained access token to authenticate API calls
+      // Send a request to get your user information using the /me endpoint
+      // The `/me` context restricts an API call to the user the token belongs to
+      // This helps make calls to user-specific endpoints instead of storing the userID
+      request.get('https://api.zoom.us/v2/users/me', (error, response, body) => {
+        if (error) {
+          console.log('API Response Error: ', error);
+          res.send('Something went wrong');
+        } else {
+          body = JSON.parse(body);
+          var JSONResponse = '<pre><code>' + JSON.stringify(body, null, 2) + '</code></pre>'
+          res.send(`
+            <style>
+              /* Your styles here */
+            </style>
+            <div class="container">
+             
+              </div>
+              <div class="response">
+                User API Response
+                ${JSONResponse}
+              </div>
+            </div>
+          `);
+        }
+      }).auth(null, null, true, accessToken);
+    });
     return;
   }
   // If no auth code is obtained, redirect to Zoom OAuth to do authentication
   res.redirect(ZOOM_AUTH + process.env.clientID + '&redirect_uri=' + process.env.redirectURL);
 });
+
 
 
 
