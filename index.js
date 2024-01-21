@@ -12,9 +12,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const clientID = process.env.clientID;
-const clientSecret = process.env.clientSecret;
-const redirectURL = process.env.redirectURL;
+// const clientID = process.env.clientID;
+// const clientSecret = process.env.clientSecret;
+// const redirectURL = process.env.redirectURL;
 
 app.use(express.json());
 app.use(cors());
@@ -30,26 +30,26 @@ app.get('/', (req, res) => {
       If the code (auth code) property exists in req.query object,
       user is redirected from Zoom OAuth. If not, then redirect to Zoom for OAuth
   */
-  const authCode=req.query.code;
+  const authCode = req.query.code;
   if (authCode) {
-      // Request an access token using the auth code
-      let url =  ZOOM_GET_AUTHCODE + authCode + '&redirect_uri=' + process.env.redirectURL;
-      request.post(url, (error, response, body) => {
-          // Parse response to JSON
-          body = JSON.parse(body);
-          const accessToken = body.access_token;
-          const refreshToken = body.refresh_token;
-          // Obtained access and refresh tokens
-          console.log(`Zoom OAuth Access Token: ${accessToken}`);
-          console.log(`Zoom OAuth Refresh Token: ${refreshToken}`);
-          if(accessToken)
-      })
+    // Request an access token using the auth code
+    let url = ZOOM_GET_AUTHCODE + authCode + '&redirect_uri=' + process.env.redirectURL;
+    request.post(url, (error, response, body) => {
+      // Parse response to JSON
+      body = JSON.parse(body);
+      const accessToken = body.access_token;
+      const refreshToken = body.refresh_token;
+      // Obtained access and refresh tokens
+      console.log(`Zoom OAuth Access Token: ${accessToken}`);
+      console.log(`Zoom OAuth Refresh Token: ${refreshToken}`);
+    })
     .auth(process.env.clientID, process.env.clientSecret);
-      return;
+    return;
   }
   // If no auth code is obtained, redirect to Zoom OAuth to do authentication
-  res.redirect(ZOOM_AUTH + process.env.clientID + '&redirect_uri=' + process.env.redirectURL)
-})
+  res.redirect(ZOOM_AUTH + process.env.clientID + '&redirect_uri=' + process.env.redirectURL);
+});
+
 
 
 // app.all("/Meeting/zoom/", async (req, res) => {
