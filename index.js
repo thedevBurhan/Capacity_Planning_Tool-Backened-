@@ -24,31 +24,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/users", usersRouter);
 app.use("/toDoListdata", isAuthenticated, ToDoListdataRouter);
 app.use("/timeSheet", isAuthenticated, TimeSheetdataRouter);
+// CONSTANTS
+const ZOOM_GET_AUTHCODE='https://zoom.us/oauth/token?grant_type=authorization_code&code=';
+const ZOOM_AUTH='https://zoom.us/oauth/authorize?response_type=code&client_id='
+//Root URL /
 //Root URL /
 app.get('/', (req, res) => {
   /*
       If the code (auth code) property exists in req.query object,
       user is redirected from Zoom OAuth. If not, then redirect to Zoom for OAuth
   */
-  const authCode = req.query.code;
+  const authCode=req.query.code;
   if (authCode) {
-    // Request an access token using the auth code
-    let url = ZOOM_GET_AUTHCODE + authCode + '&redirect_uri=' + process.env.redirectURL;
-    request.post(url, (error, response, body) => {
-      // Parse response to JSON
-      body = JSON.parse(body);
-      const accessToken = body.access_token;
-      const refreshToken = body.refresh_token;
-      // Obtained access and refresh tokens
-      console.log(`Zoom OAuth Access Token: ${accessToken}`);
-      console.log(`Zoom OAuth Refresh Token: ${refreshToken}`);
-    })
-    .auth(process.env.clientID, process.env.clientSecret);
-    return;
+      return;
   }
   // If no auth code is obtained, redirect to Zoom OAuth to do authentication
-  res.redirect(ZOOM_AUTH + process.env.clientID + '&redirect_uri=' + process.env.redirectURL);
-});
+  res.redirect(ZOOM_AUTH + process.env.clientID + '&redirect_uri=' + process.env.redirectURL)
+})
 
 
 
