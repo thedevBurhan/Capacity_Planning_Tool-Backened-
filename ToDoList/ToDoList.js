@@ -8,14 +8,18 @@ import {
 // To Generate toDoListData
 
 async function generateNewToDoListData(req, res) {
-  const { type, date, month,noteHead, notes, userid } = req.body;
+  let date = new Date();
+  let day = date.getDate();
+  let month = date.getMonth();
+  let year = date.getFullYear();
+  let todayDate = `${day}-${month}-${year}`;
+  const { type,noteHead, notes, userid } = req.body;
   try {
     await toDoList([
       {
         type: type,
-        date: date,
+        currentDate: todayDate,
         noteHead:noteHead,
-        month: month,
         notes: notes,
         userid: userid,
       },
@@ -23,6 +27,7 @@ async function generateNewToDoListData(req, res) {
     return res.status(200).json({
       type: type,
       noteHead:noteHead,
+      currentDate: todayDate,
       notes: notes,
       message: "To Do List create successfull",
       statusCode: 200,
