@@ -8,7 +8,7 @@ import {
 // To Generate timeSheet
 
 async function generateNewTimeSheetData(req, res) {
-  const { MTimeIn, MTimeOut, ATimeIn, ATimeOut,notes, userid } = req.body;
+  const { MTimeIn, MTimeOut, ATimeIn, ATimeOut, notes, userid } = req.body;
   let date = new Date();
   let day = date.getDate();
   let month = date.getMonth();
@@ -36,15 +36,15 @@ async function generateNewTimeSheetData(req, res) {
   // Calculate time differences in milliseconds
   const MTimeDifference = +parsedMTimeOut - +parsedMTimeIn;
   const ATimeDifference = +parsedATimeOut - +parsedATimeIn;
-    // console.log("MTimeDifference:", Math.floor(MTimeDifference));
-    // console.log("ATimeDifference:", ATimeDifference.toFixed(2));
-    const MHours = +MTimeDifference.toFixed(2);
-    const AHours = +ATimeDifference.toFixed(2);
-    
-    // Calculate total hours worked
-    const totalHours = (MHours + AHours).toFixed(2);
-    // console.log(totalHours); 
-    
+  // console.log("MTimeDifference:", Math.floor(MTimeDifference));
+  // console.log("ATimeDifference:", ATimeDifference.toFixed(2));
+  const MHours = +MTimeDifference.toFixed(2);
+  const AHours = +ATimeDifference.toFixed(2);
+
+  // Calculate total hours worked
+  const totalHours = (MHours + AHours).toFixed(2);
+  // console.log(totalHours); 
+
   //   Math.ceil() rounds a number UP to the nearest integer
   try {
     await timeSheet([
@@ -54,18 +54,25 @@ async function generateNewTimeSheetData(req, res) {
         MTimeOut: MTimeOut,
         ATimeIn: ATimeIn,
         ATimeOut: ATimeOut,
-        ShiftOne:MTimeDifference.toFixed(2),
-        ShiftTwo:ATimeDifference.toFixed(2),
+        ShiftOne: MTimeDifference.toFixed(2),
+        ShiftTwo: ATimeDifference.toFixed(2),
         TotalHours: totalHours,
         userid: userid,
-        notes:notes
+        notes: notes
       },
     ]);
     return res.status(200).json({
-      currentDate: todayDate,
-      TotalHours: totalHours,
-      ShiftOne:MTimeDifference.toFixed(2),
-      ShiftTwo:ATimeDifference.toFixed(2),
+      result: {
+        currentDate: todayDate,
+        MTimeIn: MTimeIn,
+        MTimeOut: MTimeOut,
+        ATimeIn: ATimeIn,
+        ATimeOut: ATimeOut,
+        ShiftOne: MTimeDifference.toFixed(2),
+        ShiftTwo: ATimeDifference.toFixed(2),
+        TotalHours: totalHours,
+        notes: notes
+      },
       message: "Today Time Sheet Added successfull",
       statusCode: 200,
     });
