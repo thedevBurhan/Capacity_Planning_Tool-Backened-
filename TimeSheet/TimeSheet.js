@@ -36,14 +36,15 @@ async function generateNewTimeSheetData(req, res) {
   // Calculate time differences in milliseconds
   const MTimeDifference = +parsedMTimeOut - +parsedMTimeIn;
   const ATimeDifference = +parsedATimeOut - +parsedATimeIn;
-  //   console.log("MTimeDifference:",MTimeDifference);
-  //   console.log("ATimeDifference:",ATimeDifference);
-  const MHours = MTimeDifference;
-  const AHours = ATimeDifference;
-
-  // Calculate total hours worked
-  const totalHours = Math.ceil(MHours + AHours);
-  //   console.log(totalHours);
+    // console.log("MTimeDifference:", Math.floor(MTimeDifference));
+    // console.log("ATimeDifference:", ATimeDifference.toFixed(2));
+    const MHours = +MTimeDifference.toFixed(2);
+    const AHours = +ATimeDifference.toFixed(2);
+    
+    // Calculate total hours worked
+    const totalHours = (MHours + AHours).toFixed(2);
+    // console.log(totalHours); 
+    
   //   Math.ceil() rounds a number UP to the nearest integer
   try {
     await timeSheet([
@@ -53,6 +54,8 @@ async function generateNewTimeSheetData(req, res) {
         MTimeOut: MTimeOut,
         ATimeIn: ATimeIn,
         ATimeOut: ATimeOut,
+        ShiftOne:MTimeDifference.toFixed(2),
+        ShiftTwo:ATimeDifference.toFixed(2),
         TotalHours: totalHours,
         userid: userid,
       },
@@ -60,6 +63,8 @@ async function generateNewTimeSheetData(req, res) {
     return res.status(200).json({
       currentDate: todayDate,
       TotalHours: totalHours,
+      ShiftOne:MTimeDifference.toFixed(2),
+      ShiftTwo:ATimeDifference.toFixed(2),
       message: "Today Time Sheet Added successfull",
       statusCode: 200,
     });
