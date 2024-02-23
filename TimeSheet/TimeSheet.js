@@ -8,7 +8,7 @@ import {
 // To Generate timeSheet
 
 async function generateNewTimeSheetData(req, res) {
-  const { MTimeIn, MTimeOut, ATimeIn, ATimeOut, userid } = req.body;
+  const { MTimeIn, MTimeOut, ATimeIn, ATimeOut,notes, userid } = req.body;
   let date = new Date();
   let day = date.getDate();
   let month = date.getMonth();
@@ -58,6 +58,7 @@ async function generateNewTimeSheetData(req, res) {
         ShiftTwo:ATimeDifference.toFixed(2),
         TotalHours: totalHours,
         userid: userid,
+        notes:notes
       },
     ]);
     return res.status(200).json({
