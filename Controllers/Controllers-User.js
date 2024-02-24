@@ -28,6 +28,17 @@ export function getAllUsers(req) {
   return client
     .db("Capacity_Planning_Tool")
     .collection("Users")
-    .find(req.query) //get by our requirement in postman
+    .find(req.query) 
     .toArray();
+}
+
+//to reset a user password
+export function updatePassword(userEmail, newPassword) {
+  return client
+    .db("Capacity_Planning_Tool")
+    .collection("Users")
+    .updateOne(
+      { email: userEmail },
+      { $set: { password: newPassword } }
+    );
 }
