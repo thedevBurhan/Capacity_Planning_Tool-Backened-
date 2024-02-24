@@ -11,7 +11,7 @@ async function generateNewTimeSheetData(req, res) {
   const { MTimeIn, MTimeOut, ATimeIn, ATimeOut, notes, userid } = req.body;
   let date = new Date();
   let day = date.getDate();
-  let month = date.getMonth();
+  let month = date.getMonth() + 1;
   let year = date.getFullYear();
   let todayDate = `${day}-${month}-${year}`;
   // Parse and format time strings
