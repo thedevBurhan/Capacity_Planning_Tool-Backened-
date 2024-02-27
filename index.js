@@ -7,7 +7,7 @@ import { isAuthenticated } from './Authentication/Auth.js';
 import { usersRouter } from './Routers/Routers-User.js';
 import { ToDoListdataRouter } from './Routers/Routers-To-Do-list.js';
 import { TimeSheetdataRouter } from './Routers/Routers-Time-Sheet.js';
-
+import {ConversationdataRouter} from "./Routers/Routers-Chat.js";
 
 dotenv.config();
 
@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/users', usersRouter);
 app.use('/toDoListdata', isAuthenticated, ToDoListdataRouter);
 app.use('/timeSheet', isAuthenticated, TimeSheetdataRouter);
-
+app.use('/chat', isAuthenticated, ConversationdataRouter);
 
 
 // import request from "request";
