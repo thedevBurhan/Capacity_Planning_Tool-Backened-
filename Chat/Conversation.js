@@ -3,13 +3,9 @@ import {
     getAllConversationDatas
 } from "../Controllers/Controllers-Chat.js";
 
+// to generate new conversation
 async function generateNewConversationData(req, res) {
-    let date = new Date();
-    let day = date.getDate();
-    let month = date.getMonth();
-    let year = date.getFullYear();
-    let todayDate = `${day}-${month}-${year}`;
-    const { conversationId, receiverId, senderId, messages, userid } = req.body;
+    const {  receiverId, senderId, userid } = req.body;
     try {
         await conversation([
             {
@@ -17,31 +13,26 @@ async function generateNewConversationData(req, res) {
                     receiverId: receiverId,
                     senderId: senderId
                 }],
-                messages: messages,
-                currentDate: todayDate,
-                conversationId: conversationId,
                 userid: userid,
             },
         ]);
         return res.status(200).json({
-            messages: messages,
-            currentDate: todayDate,
             members: [{
                 receiverId: receiverId,
                 senderId: senderId
             }],
-            conversationId: conversationId,
-            message: "To Do List create successfull",
+            userid: userid,
+            message: "successfull",
             statusCode: 200,
         });
     } catch (error) {
         console.log(error);
         return res
-
             .status(500)
             .json({ message: "Internal Server Error", statusCode: 500, error: error });
     }
 }
+
 // To Get All The conversation
 async function getAllconversationData(req, res) {
     try {
@@ -67,13 +58,11 @@ async function getSpecificUserconversationData(req, res) {
         }
 
         const specificUserConversations = allConversationDatas.filter(item => {
-            return item.conversationId == req.params.id;
+            return item.members.some(member => member.senderId == req.params.id);
         });
 
-        console.log(specificUserConversations);
-
         res.json({
-            message: "Data retrieval successful",
+            message: "successful",
             statusCode: 200,
             allConversationData: specificUserConversations,
         });
@@ -82,6 +71,7 @@ async function getSpecificUserconversationData(req, res) {
         res.status(500).json({ message: "Internal server error", statusCode: 500 });
     }
 }
+
 
 
 
