@@ -3,7 +3,7 @@ import {
     getAllMessagesDatas,
     conversation
 } from "../Controllers/Controllers-Chat.js";
-
+import { ObjectId } from "mongodb";
 
 // to generate new message
 async function generateNewMessagesData(req, res) {
@@ -12,27 +12,28 @@ async function generateNewMessagesData(req, res) {
 
         // Check if required fields are filled
         if (!messages || !senderId) {
-            return res.status(400).json({ message: 'Please fill all required fields', statusCode: 400 });
+            return res.status(400).json({ message: 'Please fill all required fields message and senderid', statusCode: 400 });
         }
 
-        // If no conversationId provided, create a new conversation
-        if (!conversationId && receiverId) {
+        // Create a new conversation if conversationId is 'new' and receiverId is provided
+        if (conversationId === '' && receiverId) {
+            const CreatingConversationId = new ObjectId();
             const newConversationResult = await conversation([
                 {
                     members: [{ receiverId, senderId }],
                     userid: userid,
+                    conversationId: CreatingConversationId,
                 },
             ]);
-            const newConversationId = newConversationResult.insertedIds[0];
-            // console.log("neConversationId",newConversationId);
-            // console.log(newConversationResult);                  
+        
+
             // Create new message in the newly created conversation
             const newMessageResult = await message([
                 {
                     receiverId,
                     senderId,
                     messages,
-                    conversationId: { id: newConversationId },
+                    conversationId: CreatingConversationId,
                 },
             ]);
 
@@ -40,37 +41,38 @@ async function generateNewMessagesData(req, res) {
                 messages,
                 receiverId,
                 senderId,
-                conversationId: { id: newConversationId },
+                conversationId: CreatingConversationId,
+                message: 'Message sent successfully',
+                statusCode: 200,
+            });
+        } else if (conversationId) {
+            // If conversationId provided, add message to existing conversation
+            const newMessageResult = await message([
+                {
+                    receiverId,
+                    senderId,
+                    messages,
+                    conversationId,
+                },
+            ]);
+
+            return res.status(200).json({
+                messages,
+                receiverId,
+                senderId,
+                conversationId,
                 message: 'Message sent successfully',
                 statusCode: 200,
             });
         } else {
             return res.status(400).json("Please fill all required fields")
         }
-
-        // If conversationId provided, add message to existing conversation
-        const newMessage = await message([
-            {
-                receiverId,
-                senderId,
-                messages,
-                conversationId,
-            },
-        ]);
-        console.log(newMessage, "newMessage");
-        return res.status(200).json({
-            messages,
-            receiverId,
-            senderId,
-            conversationId,
-            message: 'Message sent successfully',
-            statusCode: 200,
-        });
     } catch (error) {
         console.error('Error generating new message:', error);
         return res.status(500).json({ message: 'Internal Server Error', statusCode: 500, error: error });
     }
 }
+
 
 
 // To Get All The Messages
@@ -91,11 +93,11 @@ async function getAllMessagesData(req, res) {
 async function getSpecificUserMessagesData(req, res) {
     try {
         const conversationId = req.params.id;
-        if (conversationId == "new") return res.status(200).json([]);
+        if (conversationId == "") return res.status(200).json([]);
         const allConversationDatas = await getAllMessagesDatas(req);
         console.log(allConversationDatas);
         const specificUserMessages = allConversationDatas.filter(item => {
-            return item.conversationId.id === conversationId;
+            return item.conversationId === conversationId;
         });
 
         console.log(specificUserMessages);

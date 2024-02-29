@@ -14,7 +14,7 @@ router.post("/", generateNewConversationData);
 // To get all Conversation
 router.get("/allConversationData", getAllconversationData);
 // To get Conversation For specific User
-router.get("/specificUser/:id", getSpecificUserconversationData);
+router.get("/specificUser/:id/:ConId", getSpecificUserconversationData);
 // To add new message Data
 router.post("/messages/", generateNewMessagesData);
 // To get all messages data
