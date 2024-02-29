@@ -16,7 +16,7 @@ async function generateNewMessagesData(req, res) {
         }
 
         // Create a new conversation if conversationId is 'new' and receiverId is provided
-        if (conversationId == undefined && receiverId) {
+        if (conversationId == "" && receiverId) {
             const CreatingConversationId = new ObjectId();
             const newConversationResult = await conversation([
                 {
