@@ -8,8 +8,7 @@ import { ObjectId } from "mongodb";
 // to generate new message
 async function generateNewMessagesData(req, res) {
     try {
-        const time= new Date().toLocaleTimeString();
-        const { receiverId, senderId, messages, userid, conversationId } = req.body;
+        const { receiverId, senderId, messages, userid, conversationId ,time} = req.body;
 
         // Check if required fields are filled
         if (!messages || !senderId) {
