@@ -8,6 +8,7 @@ import { ObjectId } from "mongodb";
 // to generate new message
 async function generateNewMessagesData(req, res) {
     try {
+        const time= new Date().toLocaleTimeString();
         const { receiverId, senderId, messages, userid, conversationId } = req.body;
 
         // Check if required fields are filled
@@ -33,6 +34,7 @@ async function generateNewMessagesData(req, res) {
                     receiverId,
                     senderId,
                     messages,
+                    time,
                     conversationId: CreatingConversationId,
                 },
             ]);
@@ -41,6 +43,7 @@ async function generateNewMessagesData(req, res) {
                 messages,
                 receiverId,
                 senderId,
+                time,
                 conversationId: CreatingConversationId,
                 message: 'Message sent successfully',
                 statusCode: 200,
@@ -53,6 +56,7 @@ async function generateNewMessagesData(req, res) {
                     senderId,
                     messages,
                     conversationId,
+                    time
                 },
             ]);
 
@@ -61,6 +65,7 @@ async function generateNewMessagesData(req, res) {
                 receiverId,
                 senderId,
                 conversationId,
+                time,
                 message: 'Message sent successfully',
                 statusCode: 200,
             });
