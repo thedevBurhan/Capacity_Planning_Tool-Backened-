@@ -13,7 +13,7 @@ import { ConversationdataRouter } from "./Routers/Routers-Chat.js";
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(cors());
@@ -29,8 +29,8 @@ app.use('/chat', isAuthenticated, ConversationdataRouter);
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ['https://capacity-planningtool.netlify.app'],
-        methods: ["GET", "POST"],
+        origin: ['http://localhost:3001','https://capacity-planningtool.netlify.app/'],
+        methods: ["GET", "POST","OPTIONS"],
         credentials: true
     }
 })
