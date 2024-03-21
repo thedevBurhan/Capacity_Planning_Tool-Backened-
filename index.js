@@ -33,7 +33,7 @@ const server = http.createServer(app);
 // Create a new instance of Server and pass the server instance
 const io = new Server(server, {
     cors: {
-        origin: "https://capacity-planningtool.netlify.app/chat",
+        origin: '*',
         methods: ["GET", "POST", 'PUT', 'DELETE'],
     }
 });
