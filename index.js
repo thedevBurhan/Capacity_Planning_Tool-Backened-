@@ -31,7 +31,6 @@ const io = new Server(server, {
     cors: {
         origin: ['http://localhost:3001','https://capacity-planningtool.netlify.app/'],
         methods: ["GET", "POST","OPTIONS"],
-        allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true
     }
 })
