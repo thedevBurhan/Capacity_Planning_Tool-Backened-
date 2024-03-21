@@ -11,6 +11,7 @@ import { ToDoListdataRouter } from './Routers/Routers-To-Do-list.js';
 import { TimeSheetdataRouter } from './Routers/Routers-Time-Sheet.js';
 import { ConversationdataRouter } from "./Routers/Routers-Chat.js";
 
+
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,13 +27,16 @@ app.use('/timeSheet', isAuthenticated, TimeSheetdataRouter);
 app.use('/chat', isAuthenticated, ConversationdataRouter);
 
 // socket connection
+// Create an HTTP server with the express app
 const server = http.createServer(app);
+
+// Create a new instance of Server and pass the server instance
 const io = new Server(server, {
     cors: {
-        origin: "https://capacity-planningtool.netlify.app", //clienturl
+        origin: "https://capacity-planningtool.netlify.app",
         methods: ["GET", "POST", 'PUT', 'DELETE'],
     }
-})
+});
 let users = [];
 io.on('connection', socket => {
     console.log('User connected', socket.id);
