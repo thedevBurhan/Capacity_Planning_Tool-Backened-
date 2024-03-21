@@ -33,10 +33,19 @@ const server = http.createServer(app);
 // Create a new instance of Server and pass the server instance
 const io = new Server(server, {
     cors: {
-        origin: '*',
-        methods: ["GET", "POST", 'PUT', 'DELETE'],
+        origin: ['*'],
+        handlePreflightRequest: (req, res) => {
+            res.writeHead(200, {
+                "Access-Control-Allow-Headers": "my-custom-header",
+                "Access-Control-Allow-Methods": "GET, POST",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": true
+            });
+            res.end();
+        }
     }
 });
+
 let users = [];
 io.on('connection', socket => {
     console.log('User connected', socket.id);
