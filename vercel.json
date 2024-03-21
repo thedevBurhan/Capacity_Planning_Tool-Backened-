@@ -1,16 +1,28 @@
 {
-    "version":2, 
-    "name":"Money_Manager-Backened",
-    "builds":[
+    "version": 2,
+    "name": "Money_Manager-Backened",
+    "builds": [
         {
-            "src":"./index.js",
-            "use":"@vercel/node"
+            "src": "./index.js",
+            "use": "@vercel/node"
         }
     ],
-    "routes":[
+    "routes": [
         {
-         "src":"/(.*)",
-         "dest":"/index.js"   
+            "src": "/(.*)",
+            "dest": "/index.js",
+            "methods": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "PATCH",
+                "OPTIONS"
+            ],
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": "true"
+            }
         }
     ]
 }
