@@ -29,8 +29,9 @@ app.use('/chat', isAuthenticated, ConversationdataRouter);
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://capacity-planningtool.netlify.app/chat", //clienturl
-        methods: ["GET", "POST", 'PUT', 'DELETE'],
+        origin: ['https://capacity-planningtool.netlify.app'],
+        methods: ["GET", "POST"],
+        credentials: true
     }
 })
 let users = [];
