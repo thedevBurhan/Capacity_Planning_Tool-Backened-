@@ -16,7 +16,9 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://capacity-planningtool.netlify.app',
+  }));;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
