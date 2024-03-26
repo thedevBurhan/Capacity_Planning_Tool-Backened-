@@ -16,7 +16,12 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+  }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -29,7 +34,7 @@ app.use('/chat', isAuthenticated, ConversationdataRouter);
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:3001', 'https://capacity-planningtool.netlify.app/'],
+        origin: ['http://localhost:3001', 'https://capacity-planningtool.netlify.app/', 'https://capacity-planningtool.netlify.app'],
         methods: ["GET", "POST", "OPTIONS"],
         credentials: true
     }
