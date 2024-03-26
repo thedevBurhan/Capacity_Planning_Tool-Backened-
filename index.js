@@ -10,18 +10,18 @@ import { usersRouter } from './Routers/Routers-User.js';
 import { ToDoListdataRouter } from './Routers/Routers-To-Do-list.js';
 import { TimeSheetdataRouter } from './Routers/Routers-Time-Sheet.js';
 import { ConversationdataRouter } from "./Routers/Routers-Chat.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename); 
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+console.log("env", process.env.PORT)
 app.use(express.json());
-app.use(cors({
-    "origin": "*",
-    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-    "preflightContinue": false,
-    "optionsSuccessStatus": 204
-  }));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -30,11 +30,25 @@ app.use('/toDoListdata', isAuthenticated, ToDoListdataRouter);
 app.use('/timeSheet', isAuthenticated, TimeSheetdataRouter);
 app.use('/chat', isAuthenticated, ConversationdataRouter);
 
+
+app.use((req, res, next) => {
+    if (/(.ico|.js|.css|.jpg|.png|.map)$/i.test(req.path)) {
+        next();
+    } else {
+        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+        res.header('Expires', '-1');
+        res.header('Pragma', 'no-cache');
+        res.sendFile(path.join(__dirname, '../Capacity_Planning-Tool-Frontend/build', 'index.html'));
+    }
+});
+
+app.use(express.static(path.join(__dirname, '../Capacity_Planning-Tool-Frontend/build')));
+
 // socket connection
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:3001', 'https://capacity-planningtool.netlify.app/', 'https://capacity-planningtool.netlify.app'],
+        origin: ['http://localhost:9045', 'https://capacity-planningtool.netlify.app/', 'https://capacity-planningtool.netlify.app'],
         methods: ["GET", "POST", "OPTIONS"],
         credentials: true
     }
