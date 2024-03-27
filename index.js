@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 console.log("env", process.env.PORT)
 app.use(express.json());
@@ -48,7 +48,7 @@ app.use(express.static(path.join(__dirname, '../Capacity_Planning-Tool-Frontend/
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:9045', 'https://capacity-planningtool.netlify.app/', 'https://capacity-planningtool.netlify.app'],
+        origin: ['http://localhost:9045','http://localhost:3000', 'https://capacity-planningtool.netlify.app/', 'https://capacity-planningtool.netlify.app'],
         methods: ["GET", "POST", "OPTIONS"],
         credentials: true
     }
