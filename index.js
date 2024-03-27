@@ -25,10 +25,10 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/users', usersRouter);
-app.use('/toDoListdata', isAuthenticated, ToDoListdataRouter);
-app.use('/timeSheet', isAuthenticated, TimeSheetdataRouter);
-app.use('/chat', isAuthenticated, ConversationdataRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/toDoListdata', isAuthenticated, ToDoListdataRouter);
+app.use('/api/timeSheet', isAuthenticated, TimeSheetdataRouter);
+app.use('/api/chat', isAuthenticated, ConversationdataRouter);
 
 
 app.use((req, res, next) => {
