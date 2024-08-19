@@ -48,7 +48,7 @@ app.use(express.static(path.join(__dirname, '../Capacity_Planning-Tool-Frontend/
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ['http://localhost:9045','http://localhost:3000', 'https://capacity-planningtool.netlify.app/', 'https://capacity-planningtool.netlify.app'],
+        origin: [ 'https://capacity-planningtool.netlify.app', 'https://capacity-planningtool.netlify.app'],
         methods: ["GET", "POST", "OPTIONS"],
         credentials: true
     }
