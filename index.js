@@ -31,18 +31,18 @@ app.use('/api/timeSheet', isAuthenticated, TimeSheetdataRouter);
 app.use('/api/chat', isAuthenticated, ConversationdataRouter);
 
 
-app.use((req, res, next) => {
-    if (/(.ico|.js|.css|.jpg|.png|.map)$/i.test(req.path)) {
-        next();
-    } else {
-        res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-        res.header('Expires', '-1');
-        res.header('Pragma', 'no-cache');
-        res.sendFile(path.join(__dirname, '../Capacity_Planning-Tool-Frontend/build', 'index.html'));
-    }
-});
+// app.use((req, res, next) => {
+//     if (/(.ico|.js|.css|.jpg|.png|.map)$/i.test(req.path)) {
+//         next();
+//     } else {
+//         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+//         res.header('Expires', '-1');
+//         res.header('Pragma', 'no-cache');
+//         res.sendFile(path.join(__dirname, '../Capacity_Planning-Tool-Frontend/build', 'index.html'));
+//     }
+// });
 
-app.use(express.static(path.join(__dirname, '../Capacity_Planning-Tool-Frontend/build')));
+// app.use(express.static(path.join(__dirname, '../Capacity_Planning-Tool-Frontend/build')));
 
 // socket connection
 const server = http.createServer(app);
